@@ -22,7 +22,6 @@ try {
     echo 'Connection failed: ' . $e->getMessage();
     exit();
 }
-
 if (isset($_GET["username"], $_GET["password"])) {
     $username = trim($_GET["username"]);
     $password = trim($_GET["password"]);
@@ -30,14 +29,18 @@ if (isset($_GET["username"], $_GET["password"])) {
     if ($username === "" | $password === "") {
         echo json_encode(array("a" => false, "error" => "Fields are empty!"));
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
-        $stmt->bindParam(":username", $username);
-        $stmt->bindParam(":password", $password);
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE `username` = :username AND `password` = :password");
+        $stmt->bindParam("username", $username);
+        $stmt->bindParam("password", $password);
         $stmt->execute();
         $result = $stmt->fetch();
-
         if ($result) {
             echo json_encode(array("a" => true, "username" => $result["username"]));
+            $stmt = $pdo->prepare("INSERT INTO `history_login`(`username`, `password`, `date`) VALUES (:username,:password,:time)");
+            $stmt->bindValue(":username", $result["username"]);
+            $stmt->bindValue(":password", $result["password"]);
+            $stmt->bindValue(":time", time());
+            $user = $stmt->execute();
         } else {
             echo json_encode(array("a" => false, "error" => "Username or password is incorrect"));
         }
@@ -45,5 +48,5 @@ if (isset($_GET["username"], $_GET["password"])) {
 } else {
     echo json_encode(array("a" => false, "error" => "Required fields are missing"));
 }
-echo "<br>";
-var_dump(json_decode('{"status":false,"error":"Fields are empty!"}'));
+/*echo "<br>";
+var_dump(json_decode('{"status":false,"error":"Fields are empty!"}'));*/

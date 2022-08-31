@@ -43,8 +43,14 @@ if (isset($_GET["username"], $_GET["password"])) {
             $stmt->bindParam(":username", $username);
             $stmt->bindParam(":password", $password);
             $stmt->bindParam(":name", $name);
+            $user = $stmt->execute();
+/*            echo "___________";*/
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username0");
+            $stmt->bindParam(":username0", $username);
             $stmt->execute();
-            echo json_encode(array("status" => true, "massage" => "welcome " . $name));
+            $user = $stmt->fetch();
+            echo json_encode(array("status" => true, "massage" => "welcome " . $user["name"]));
+
         }
     }
 } else {
