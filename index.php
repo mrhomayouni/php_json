@@ -26,7 +26,7 @@ if (isset($_GET["username"], $_GET["password"])) {
     $username = trim($_GET["username"]);
     $password = trim($_GET["password"]);
 
-    if ($username === "" | $password === "") {
+    if ($username === "" || $password === "") {
         echo json_encode(array("a" => false, "error" => "Fields are empty!"));
     } else {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE `username` = :username AND `password` = :password");
